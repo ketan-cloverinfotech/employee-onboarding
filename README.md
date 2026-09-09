@@ -16,6 +16,7 @@ A working employee onboarding application built with Java, Spring Boot, Thymelea
 - Health endpoint at `/actuator/health`.
 
 ## Technology
+#######
 ###############
 | Layer | Technology |
 |---|---|
