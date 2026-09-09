@@ -1,0 +1,20 @@
+target/
+.idea/
+.vscode/
+*.iml
+.env
+*.log
+.DS_Store
+
+# Local configuration backups
+*.pre-github
+*.bak
+
+# Local secrets/config
+.env
+.env.*
+!.env.example
+
+# Build/runtime data
+target/
+*.log

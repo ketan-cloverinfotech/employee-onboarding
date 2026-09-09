@@ -1,0 +1,50 @@
+### List employees
+GET http://localhost:8080/api/employees
+Accept: application/json
+
+### Filter employees
+GET http://localhost:8080/api/employees?search=engineering&status=PRE_BOARDING
+Accept: application/json
+
+### Create employee
+POST http://localhost:8080/api/employees
+Content-Type: application/json
+
+{
+  "employeeCode": "EMP-1001",
+  "firstName": "Amit",
+  "lastName": "Patil",
+  "email": "amit.patil@example.com",
+  "phone": "+91 98765 43210",
+  "department": "Engineering",
+  "jobTitle": "DevOps Engineer",
+  "managerName": "Priya Sharma",
+  "joiningDate": "2026-08-17",
+  "employmentType": "FULL_TIME",
+  "status": "PRE_BOARDING"
+}
+
+### Get one employee
+GET http://localhost:8080/api/employees/1
+Accept: application/json
+
+### Update employee
+PUT http://localhost:8080/api/employees/1
+Content-Type: application/json
+
+{
+  "employeeCode": "EMP-1001",
+  "firstName": "Amit",
+  "lastName": "Patil",
+  "email": "amit.patil@example.com",
+  "phone": "+91 98765 43210",
+  "department": "Platform Engineering",
+  "jobTitle": "Senior DevOps Engineer",
+  "managerName": "Priya Sharma",
+  "joiningDate": "2026-08-17",
+  "employmentType": "FULL_TIME",
+  "status": "IN_PROGRESS"
+}
+
+### Delete employee
+DELETE http://localhost:8080/api/employees/1

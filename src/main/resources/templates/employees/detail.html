@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${employee.fullName + ' · Employee Onboarding'}">Employee</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/employees}">
+            <span class="brand-mark">EO</span>
+            <span>Employee Onboarding</span>
+        </a>
+        <a class="button button-secondary" th:href="@{/employees/{id}/edit(id=${employee.id})}">Edit employee</a>
+    </div>
+</header>
+
+<main class="container page-space">
+    <a class="back-link" th:href="@{/employees}">← All employees</a>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+    <section class="employee-hero card">
+        <div class="avatar" th:text="${#strings.substring(employee.firstName,0,1) + #strings.substring(employee.lastName,0,1)}">AB</div>
+        <div class="employee-main">
+            <div class="employee-title-row">
+                <div>
+                    <p class="eyebrow" th:text="${employee.employeeCode}">EMP-1001</p>
+                    <h1 th:text="${employee.fullName}">Employee name</h1>
+                    <p class="muted" th:text="${employee.jobTitle + ' · ' + employee.department}"></p>
+                </div>
+                <span class="badge badge-large"
+                      th:classappend="${' status-' + employee.status.name().toLowerCase().replace('_','-')}"
+                      th:text="${employee.status.label}"></span>
+            </div>
+
+            <div class="detail-grid">
+                <div><span>Email</span><strong th:text="${employee.email}"></strong></div>
+                <div><span>Phone</span><strong th:text="${employee.phone ?: 'Not provided'}"></strong></div>
+                <div><span>Manager</span><strong th:text="${employee.managerName ?: 'Not assigned'}"></strong></div>
+                <div><span>Joining date</span><strong th:text="${employee.joiningDate}"></strong></div>
+                <div><span>Employment</span><strong th:text="${employee.employmentType.label}"></strong></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="content-grid">
+        <section class="card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">CHECKLIST</p>
+                    <h2>Onboarding tasks</h2>
+                </div>
+                <strong class="progress-number" th:text="${progress + '%'}">0%</strong>
+            </div>
+            <div class="progress-track progress-large">
+                <div class="progress-fill" th:style="'width:' + ${progress} + '%'"></div>
+            </div>
+            <p class="muted task-summary"
+               th:text="${employee.completedTaskCount + ' of ' + employee.tasks.size() + ' tasks completed'}"></p>
+
+            <div class="task-list">
+                <article class="task-item" th:each="task : ${employee.tasks}" th:classappend="${task.completed} ? ' task-completed' : ''">
+                    <form th:action="@{/employees/{employeeId}/tasks/{taskId}/toggle(employeeId=${employee.id},taskId=${task.id})}"
+                          method="post">
+                        <button class="check-button" type="submit" th:aria-label="${task.completed ? 'Mark task incomplete' : 'Mark task complete'}">
+                            <span th:text="${task.completed ? '✓' : ''}"></span>
+                        </button>
+                    </form>
+                    <div class="task-content">
+                        <div class="task-title-row">
+                            <strong th:text="${task.title}"></strong>
+                            <span class="category" th:text="${task.category.label}"></span>
+                        </div>
+                        <p th:if="${task.description}" th:text="${task.description}"></p>
+                        <span class="due-date" th:text="${task.dueDate != null ? 'Due ' + task.dueDate : 'No due date'}"></span>
+                    </div>
+                    <form th:action="@{/employees/{employeeId}/tasks/{taskId}/delete(employeeId=${employee.id},taskId=${task.id})}"
+                          method="post" onsubmit="return confirm('Delete this task?')">
+                        <button class="icon-button danger-text" type="submit" title="Delete task">×</button>
+                    </form>
+                </article>
+
+                <div class="empty-state compact" th:if="${employee.tasks.isEmpty()}">
+                    <h3>No onboarding tasks</h3>
+                    <p>Add a task using the form.</p>
+                </div>
+            </div>
+        </section>
+
+        <aside class="card add-task-card">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">NEW TASK</p>
+                    <h2>Add checklist item</h2>
+                </div>
+            </div>
+            <form method="post" th:action="@{/employees/{id}/tasks(id=${employee.id})}" th:object="${taskForm}">
+                <div class="field">
+                    <label for="title">Task title *</label>
+                    <input id="title" type="text" th:field="*{title}" placeholder="Example: Create GitHub account">
+                    <span class="field-error" th:errors="*{title}"></span>
+                </div>
+                <div class="field">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" th:field="*{description}" placeholder="Add useful details"></textarea>
+                    <span class="field-error" th:errors="*{description}"></span>
+                </div>
+                <div class="field">
+                    <label for="category">Category *</label>
+                    <select id="category" th:field="*{category}">
+                        <option value="">Select category</option>
+                        <option th:each="categoryOption : ${taskCategories}" th:value="${categoryOption}"
+                                th:text="${categoryOption.label}"></option>
+                    </select>
+                    <span class="field-error" th:errors="*{category}"></span>
+                </div>
+                <div class="field">
+                    <label for="dueDate">Due date</label>
+                    <input id="dueDate" type="date" th:field="*{dueDate}">
+                </div>
+                <button class="button button-primary full-width" type="submit">Add task</button>
+            </form>
+
+            <hr>
+            <form th:action="@{/employees/{id}/delete(id=${employee.id})}" method="post"
+                  onsubmit="return confirm('Delete this employee and all onboarding tasks?')">
+                <button class="button button-danger full-width" type="submit">Delete employee</button>
+            </form>
+        </aside>
+    </div>
+</main>
+</body>
+</html>

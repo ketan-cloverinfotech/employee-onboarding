@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle + ' · Employee Onboarding'}">Employee form</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-inner">
+        <a class="brand" th:href="@{/employees}">
+            <span class="brand-mark">EO</span>
+            <span>Employee Onboarding</span>
+        </a>
+    </div>
+</header>
+
+<main class="container narrow page-space">
+    <a class="back-link" th:href="${employeeId != null} ? @{/employees/{id}(id=${employeeId})} : @{/employees}">← Back</a>
+
+    <section class="card form-card">
+        <div class="card-heading">
+            <p class="eyebrow">EMPLOYEE DETAILS</p>
+            <h1 th:text="${pageTitle}">Add employee</h1>
+            <p class="muted">Default HR, IT, manager, and training tasks are created automatically for new employees.</p>
+        </div>
+
+        <form method="post" th:action="${formAction}" th:object="${employeeForm}">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="employeeCode">Employee code *</label>
+                    <input id="employeeCode" type="text" th:field="*{employeeCode}" placeholder="EMP-1001">
+                    <span class="field-error" th:errors="*{employeeCode}"></span>
+                </div>
+                <div class="field">
+                    <label for="email">Work email *</label>
+                    <input id="email" type="email" th:field="*{email}" placeholder="name@company.com">
+                    <span class="field-error" th:errors="*{email}"></span>
+                </div>
+                <div class="field">
+                    <label for="firstName">First name *</label>
+                    <input id="firstName" type="text" th:field="*{firstName}">
+                    <span class="field-error" th:errors="*{firstName}"></span>
+                </div>
+                <div class="field">
+                    <label for="lastName">Last name *</label>
+                    <input id="lastName" type="text" th:field="*{lastName}">
+                    <span class="field-error" th:errors="*{lastName}"></span>
+                </div>
+                <div class="field">
+                    <label for="phone">Phone</label>
+                    <input id="phone" type="text" th:field="*{phone}" placeholder="+91 98765 43210">
+                    <span class="field-error" th:errors="*{phone}"></span>
+                </div>
+                <div class="field">
+                    <label for="department">Department *</label>
+                    <input id="department" type="text" th:field="*{department}" placeholder="Engineering">
+                    <span class="field-error" th:errors="*{department}"></span>
+                </div>
+                <div class="field">
+                    <label for="jobTitle">Job title *</label>
+                    <input id="jobTitle" type="text" th:field="*{jobTitle}" placeholder="DevOps Engineer">
+                    <span class="field-error" th:errors="*{jobTitle}"></span>
+                </div>
+                <div class="field">
+                    <label for="managerName">Manager</label>
+                    <input id="managerName" type="text" th:field="*{managerName}" placeholder="Manager name">
+                    <span class="field-error" th:errors="*{managerName}"></span>
+                </div>
+                <div class="field">
+                    <label for="joiningDate">Joining date *</label>
+                    <input id="joiningDate" type="date" th:field="*{joiningDate}">
+                    <span class="field-error" th:errors="*{joiningDate}"></span>
+                </div>
+                <div class="field">
+                    <label for="employmentType">Employment type *</label>
+                    <select id="employmentType" th:field="*{employmentType}">
+                        <option value="">Select type</option>
+                        <option th:each="type : ${employmentTypes}" th:value="${type}" th:text="${type.label}"></option>
+                    </select>
+                    <span class="field-error" th:errors="*{employmentType}"></span>
+                </div>
+                <div class="field">
+                    <label for="status">Status *</label>
+                    <select id="status" th:field="*{status}">
+                        <option th:each="statusOption : ${statuses}" th:value="${statusOption}"
+                                th:text="${statusOption.label}"></option>
+                    </select>
+                    <span class="field-error" th:errors="*{status}"></span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a class="button button-secondary" th:href="${employeeId != null} ? @{/employees/{id}(id=${employeeId})} : @{/employees}">Cancel</a>
+                <button class="button button-primary" type="submit">Save employee</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
